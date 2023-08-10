@@ -50,7 +50,7 @@ const Home: React.FC = () => {
       <h2 className="mb-6 text-lg text-amber-600 font-bold">Myanmar Addresses</h2>
         <div className="flex flex-row flex-wrap justify-start">
           {myanmarAddresses.map(address => (
-            <div key={address.id} className="address-card sm:me- mb-6 p-4 bg-white rounded-xl">
+            <div key={address.id} className="address-card me-0 sm:me-8 mb-6 p-4 bg-white rounded-xl">
               <p className="mb-2"> <FontAwesomeIcon className="me-4 text-amber-800" icon={faMapLocationDot}></FontAwesomeIcon> {address.address}</p>
               <p> <FontAwesomeIcon className="me-4 text-amber-800" icon={faPhone}></FontAwesomeIcon> {address.phone}</p>
             </div>
