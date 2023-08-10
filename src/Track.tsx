@@ -12,6 +12,7 @@ type RecipientInfo = {
     name: string;
     phone?: string;
     address?: string;
+    postal_code?: string;
 };
 
 type SenderInfo = {
@@ -20,6 +21,7 @@ type SenderInfo = {
     email?: string;
     phone?: string;
     address?: string;
+    postal_code?: string;
 };
 
 type Item = {
@@ -130,6 +132,8 @@ const Track: React.FC = () => {
                                 <p>Name: <span className="text-amber-600">{orderData.recipient_info.name}</span></p>
                                 {orderData.recipient_info.phone && <p>Phone: <span className="text-amber-600">{orderData.recipient_info.phone}</span></p>}
                                 {orderData.recipient_info.address && <p>Address: <span className="text-amber-600">{orderData.recipient_info.address}</span></p>}
+                                {orderData.recipient_info.postal_code && <p>Postal Code: <span className="text-amber-600">{orderData.recipient_info.postal_code}</span></p>}
+
                             </div>
                         )}
 
@@ -140,6 +144,8 @@ const Track: React.FC = () => {
                                 {orderData.sender_info.email && <p>Email: <span className="text-amber-600">{orderData.sender_info.email}</span></p>}
                                 {orderData.sender_info.phone && <p>Phone: <span className="text-amber-600">{orderData.sender_info.phone}</span></p>}
                                 {orderData.sender_info.address && <p>Address: <span className="text-amber-600">{orderData.sender_info.address}</span></p>}
+                                {orderData.sender_info.postal_code && <p>Postal Code: <span className="text-amber-600">{orderData.sender_info.postal_code}</span></p>}
+
                             </div>
                         )}
                     </div>
