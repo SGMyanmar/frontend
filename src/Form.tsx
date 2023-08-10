@@ -253,7 +253,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 ps-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.postal_code"
           value={formData.sender_info.postal_code}
           onChange={event => handleChange(event, 'sender_info', 'postal_code')}
