@@ -165,7 +165,7 @@ const MyForm: React.FC = () => {
         <h2 className="text-amber-600 font-bold mb-4">Information</h2>
         <select
           name="type"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           value={formData.type}
           onChange={event => handleRootChange(event, 'type')}
         >
@@ -173,7 +173,7 @@ const MyForm: React.FC = () => {
           <option value="sg to mm">SG to MM</option>
         </select>
         <select
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="who_pay"
           value={formData.who_pay}
           onChange={event => handleRootChange(event, 'who_pay')}
@@ -186,7 +186,7 @@ const MyForm: React.FC = () => {
         <h2 className="text-amber-600 font-bold mb-4">Recipient Information</h2>
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.name"
           value={formData.recipient_info.name}
           onChange={event => handleChange(event, 'recipient_info', 'name')}
@@ -194,7 +194,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.phone"
           value={formData.recipient_info.phone}
           onChange={event => handleChange(event, 'recipient_info', 'phone')}
@@ -202,7 +202,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.address"
           value={formData.recipient_info.address}
           onChange={event => handleChange(event, 'recipient_info', 'address')}
@@ -210,7 +210,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.postal_code"
           value={formData.recipient_info.postal_code}
           onChange={event => handleChange(event, 'recipient_info', 'postal_code')}
@@ -221,7 +221,7 @@ const MyForm: React.FC = () => {
         <h2 className="text-amber-600 font-bold mb-4">Sender Information</h2>
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.name"
           value={formData.sender_info.name}
           onChange={event => handleChange(event, 'sender_info', 'name')}
@@ -229,7 +229,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="email"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.email"
           value={formData.sender_info.email}
           onChange={event => handleChange(event, 'sender_info', 'email')}
@@ -237,7 +237,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.phone"
           value={formData.sender_info.phone}
           onChange={event => handleChange(event, 'sender_info', 'phone')}
@@ -245,7 +245,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.address"
           value={formData.sender_info.address}
           onChange={event => handleChange(event, 'sender_info', 'address')}
@@ -253,7 +253,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.postal_code"
           value={formData.sender_info.postal_code}
           onChange={event => handleChange(event, 'sender_info', 'postal_code')}
