@@ -294,7 +294,7 @@ const MyForm: React.FC = () => {
       {hasEmptyFields() && <p className="text-red-500 mb-4"> Please fill in all fields before submitting.</p>}
       <button className="focus:outline-0 px-8 py-2 mb-4 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-400" type="submit">
         {!submitting ? "Submit Form" : (<>
-          <Loader loading={submitting} message='' color='#ffffffr'></Loader>
+          <Loader loading={submitting} message='' color='#ffffff'></Loader>
         </>)}
       </button>
     </form>
