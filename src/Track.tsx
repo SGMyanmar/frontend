@@ -153,7 +153,7 @@ const Track: React.FC = () => {
                     {orderData.items && (
                         <div>
                             <h3 className="mb-4 text-lg font-medium">Items</h3>
-                            <ul className="flex flex-row gap-4 justify-start mb-8">
+                            <ul className="flex flex-column sm:flex-row gap-4 justify-start mb-8">
                                 {orderData.items.map((item) => (
                                     <li key={item.id} className="bg-white p-4 rounded-xl">
                                         <p>Category: <span className="text-amber-600">{item.name}</span></p>
