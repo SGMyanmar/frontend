@@ -11,7 +11,7 @@ function App() {
   return (
     <>
     <Nav></Nav>
-    <div className="p-8 md:px-20">
+    <div className="p-2 md:px-20">
       <BrowserRouter>
         <Routes>
           <Route path='/form' element={<>
