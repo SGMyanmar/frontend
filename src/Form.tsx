@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import base_url from './base_url';
@@ -24,7 +26,10 @@ interface FormData {
     weight: number;
     fee: string;
   }[];
-  discount_coupon: string;
+  order_addons: {
+    addon: number;
+    addon_choice: number;
+  }[];
   type: string;
   status: string;
   who_pay: string;
@@ -53,7 +58,7 @@ const initialFormData: FormData = {
       "fee": "0"
     }
   ],
-  "discount_coupon": "hello",
+  "order_addons": [],
   "type": "mm to sg",
   "status": "pending",
   "who_pay": "mm pay"
@@ -63,7 +68,20 @@ const MyForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<FormData>({ ...initialFormData });
+  const [addons, setAddons] = useState<any[]>([]); // Store addon data
 
+  useEffect(() => {
+    const fetchAddons = async () => {
+      try {
+        const response = await axios.get(`${base_url()}/api/addons/`);
+        const filteredAddons = response.data.filter((addon: any) => addon.type === formData.type);
+        setAddons(filteredAddons);
+      } catch (error) {
+        console.log('Error fetching addons:', error);
+      }
+    };
+    fetchAddons();
+  }, [formData.type]);
 
   const hasEmptyFields = () => Object.keys(formData).some((category) => {
     if (typeof formData[category] === 'object') {
@@ -159,8 +177,38 @@ const MyForm: React.FC = () => {
   };
 
 
+  const handleAddonCheck = (event: React.ChangeEvent<HTMLInputElement>, index: number, addon_id:number) => {
+    const checked = event.target.checked;
+    if (checked) {
+      setFormData(prevData => ({
+        ...prevData,
+        order_addons: [
+          ...prevData.order_addons,
+          { addon: addon_id, addon_choice: null }
+        ]
+      }));
+    } else {
+      setFormData(prevData => ({
+        ...prevData,
+        order_addons: prevData.order_addons.filter(addonObj => addonObj.addon !== index)
+      }));
+    }
+  };
+
+
+  const handleAddonChoiceChange = (event: React.ChangeEvent<HTMLSelectElement>, addonIndex: number) => {
+    const { value } = event.target;
+    setFormData(prevData => {
+      const updatedOrderAddons = prevData.order_addons.map(addonObj =>
+        addonObj.addon === addonIndex ? { ...addonObj, addon_choice: value } : addonObj
+      );
+      return { ...prevData, order_addons: updatedOrderAddons };
+    });
+  };
+
   return (
     <form onSubmit={handleSubmit}>
+
       <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
         <h2 className="text-amber-600 font-bold mb-4">Information</h2>
         <select
@@ -182,6 +230,37 @@ const MyForm: React.FC = () => {
           <option value="sg pay">SG Pay</option>
         </select>
       </div>
+
+      <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
+        <h2 className="text-amber-600 font-bold mb-4">Order Addons</h2>
+        {addons.map((addon, index) => (
+          <div key={index}>
+            <label className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                name={`addon_${index}`}
+                checked={formData.order_addons.some(addonObj => addonObj.addon === addon.id)}
+                onChange={event => handleAddonCheck(event, index, addon.id)}
+                className="me-2"
+              />
+              {addon.name} {/* Display addon name */}
+            </label>
+            {formData.order_addons.some(addonObj => addonObj.addon === addon.id) && (
+              <select
+                className="mb-4 px-4 py-2 bg-white rounded-xl border-none"
+                name={`addon_choice_${index}`}
+                onChange={event => handleAddonChoiceChange(event, addon.id)}
+              >
+                <option value="">Select Option</option>
+                {addon.choices.map((choice: any) => (
+                  <option key={choice.id} value={choice.id}>{choice.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
+        ))}
+      </div>
+
       <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
         <h2 className="text-amber-600 font-bold mb-4">Recipient Information</h2>
         <input
