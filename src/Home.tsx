@@ -33,7 +33,8 @@ const Home: React.FC = () => {
         <div className="w-screen h-screen absolute top-0 left-0 bg-amber-200 opacity-50 -z-10"></div>
         <img className="w-screen h-screen absolute top-0 left-0 cover -z-20 brightness-75" src={bg}></img>
     <h1 className="mt-8 mb-6 text-xl md:text-4xl text-white font-bold text-center">SGMYANMAR LOGISTICS SERVICE</h1>
-    <button onClick={()=>window.open('/form', '_self')} className="mb-14 px-12 py-4 bg-lime-500 border-white border-2 text-white hover:bg-lime-400 rounded-xl mx-auto block text-lg"><FontAwesomeIcon icon={faTruckFast}></FontAwesomeIcon> Submit an online form</button>
+    <button onClick={()=>window.open('/form', '_self')} className="mb-4 px-12 py-4 bg-lime-500 border-white border-2 text-white hover:bg-lime-400 rounded-xl mx-auto block text-lg"><FontAwesomeIcon icon={faTruckFast}></FontAwesomeIcon> Submit an online form</button>
+    <a className="mb-14 mx-auto block w-fit text-white text-xl underline" href='/rules'>See Logistics Fees</a>
     <div className="bg-lime-50 shadow-md p-8 rounded-xl">
       <div className="my-12">
         <h2 className="mb-6 text-lg text-amber-600 font-bold">Singapore Addresses</h2>

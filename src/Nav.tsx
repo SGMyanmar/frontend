@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import logo from './assets/logo.png';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome, faTruckFast, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
-import './Nav.css'; // Add your CSS file here
+import './Nav.css';
 
 export default function Nav() {
     const [prevScrollPos, setPrevScrollPos] = useState(0);

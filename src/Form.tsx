@@ -33,6 +33,7 @@ interface FormData {
   type: string;
   status: string;
   who_pay: string;
+  shipping_method: string;
 
   [key: string]: any;
 }
@@ -61,7 +62,8 @@ const initialFormData: FormData = {
   "order_addons": [],
   "type": "mm to sg",
   "status": "pending",
-  "who_pay": "mm pay"
+  "who_pay": "mm pay",
+  "shipping_method": "air cargo",
 };
 
 const MyForm: React.FC = () => {
@@ -176,8 +178,7 @@ const MyForm: React.FC = () => {
     }));
   };
 
-
-  const handleAddonCheck = (event: React.ChangeEvent<HTMLInputElement>, index: number, addon_id:number) => {
+  const handleAddonCheck = (event: React.ChangeEvent<HTMLInputElement>, index: number, addon_id: number) => {
     const checked = event.target.checked;
     if (checked) {
       setFormData(prevData => ({
@@ -190,17 +191,17 @@ const MyForm: React.FC = () => {
     } else {
       setFormData(prevData => ({
         ...prevData,
-        order_addons: prevData.order_addons.filter(addonObj => addonObj.addon !== index)
+        order_addons: prevData.order_addons.filter(addonObj => addonObj.addon !== addon_id)
       }));
     }
   };
-
+  
 
   const handleAddonChoiceChange = (event: React.ChangeEvent<HTMLSelectElement>, addonIndex: number) => {
     const { value } = event.target;
     setFormData(prevData => {
       const updatedOrderAddons = prevData.order_addons.map(addonObj =>
-        addonObj.addon === addonIndex ? { ...addonObj, addon_choice: value } : addonObj
+        addonObj.addon === addonIndex ? { ...addonObj, addon_choice: value} : addonObj
       );
       return { ...prevData, order_addons: updatedOrderAddons };
     });
@@ -215,7 +216,12 @@ const MyForm: React.FC = () => {
           name="type"
           className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           value={formData.type}
-          onChange={event => handleRootChange(event, 'type')}
+          onChange={event => {handleRootChange(event, 'type'); 
+          setFormData(prevData => ({
+            ...prevData,
+            order_addons: []
+          }));
+        }}
         >
           <option value="mm to sg">MM to SG</option>
           <option value="sg to mm">SG to MM</option>
@@ -229,37 +235,51 @@ const MyForm: React.FC = () => {
           <option value="mm pay">MM Pay</option>
           <option value="sg pay">SG Pay</option>
         </select>
+        <select
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          name="shipping_method"
+          value={formData.shipping_method}
+          onChange={event => handleRootChange(event, 'shipping_method')}
+        >
+          <option value="air cargo">Air Cargo</option>
+          <option value="sea cargo">Sea Cargo</option>
+          <option value="land express">Land Express</option>
+          <option value="land cargo">Land Cargo</option>
+        </select>
       </div>
 
-      <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
-        <h2 className="text-amber-600 font-bold mb-4">Order Addons</h2>
-        {addons.map((addon, index) => (
-          <div key={index}>
-            <label className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                name={`addon_${index}`}
-                checked={formData.order_addons.some(addonObj => addonObj.addon === addon.id)}
-                onChange={event => handleAddonCheck(event, index, addon.id)}
-                className="me-2"
-              />
-              {addon.name} {/* Display addon name */}
-            </label>
-            {formData.order_addons.some(addonObj => addonObj.addon === addon.id) && (
-              <select
-                className="mb-4 px-4 py-2 bg-white rounded-xl border-none"
-                name={`addon_choice_${index}`}
-                onChange={event => handleAddonChoiceChange(event, addon.id)}
-              >
-                <option value="">Select Option</option>
-                {addon.choices.map((choice: any) => (
-                  <option key={choice.id} value={choice.id}>{choice.name}</option>
-                ))}
-              </select>
-            )}
-          </div>
-        ))}
-      </div>
+      {true && (
+        <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
+          <h2 className="text-amber-600 font-bold mb-4">Order Addons</h2>
+          {addons.map((addon, index) => (
+            <div key={index}>
+              <label className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name={`addon_${index}`}
+                  checked={formData.order_addons.some(addonObj => addonObj.addon === addon.id)}
+                  onChange={event => handleAddonCheck(event, index, addon.id)}
+                  className="me-2"
+                />
+                {addon.name}
+              </label>
+              {formData.order_addons.some(addonObj => addonObj.addon === addon.id) && (
+                <select
+                  className="mb-4 px-4 py-2 bg-white rounded-xl border-none"
+                  name={`addon_choice_${index}`}
+                  onChange={event => handleAddonChoiceChange(event, addon.id)}
+                >
+                  <option value="">Select Option</option>
+                  {addon.choices.map((choice: any) => (
+                    <option key={choice.id} value={choice.id}>{choice.name} - {choice.fee} SGD</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
 
       <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
         <h2 className="text-amber-600 font-bold mb-4">Recipient Information</h2>
