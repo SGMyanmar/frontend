@@ -3,6 +3,7 @@ import MyForm from './Form'
 import Nav from './Nav'
 import Footer from './Footer'
 import Home from './Home'
+import Rules from "./Rules";
 import Success from './Success'
 import Track from './Track'
 
@@ -11,12 +12,18 @@ function App() {
   return (
     <>
     <Nav></Nav>
-    <div className="p-8 md:px-20">
+    <div className="p-2 md:px-20">
       <BrowserRouter>
         <Routes>
           <Route path='/form' element={<>
             <MyForm></MyForm>
           </>}>
+          </Route>
+
+          <Route path='/rules' element={<>
+          <Rules></Rules>
+          </>}>
+
           </Route>
 
           <Route path='/' element={<>

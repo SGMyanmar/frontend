@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import base_url from './base_url';
@@ -24,10 +26,14 @@ interface FormData {
     weight: number;
     fee: string;
   }[];
-  discount_coupon: string;
+  order_addons: {
+    addon: number;
+    addon_choice: number;
+  }[];
   type: string;
   status: string;
   who_pay: string;
+  shipping_method: string;
 
   [key: string]: any;
 }
@@ -53,17 +59,31 @@ const initialFormData: FormData = {
       "fee": "0"
     }
   ],
-  "discount_coupon": "hello",
+  "order_addons": [],
   "type": "mm to sg",
   "status": "pending",
-  "who_pay": "mm pay"
+  "who_pay": "mm pay",
+  "shipping_method": "air cargo",
 };
 
 const MyForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [formErrors, setFormErrors] = useState<FormData>({ ...initialFormData });
+  const [addons, setAddons] = useState<any[]>([]); // Store addon data
 
+  useEffect(() => {
+    const fetchAddons = async () => {
+      try {
+        const response = await axios.get(`${base_url()}/api/addons/`);
+        const filteredAddons = response.data.filter((addon: any) => addon.type === formData.type);
+        setAddons(filteredAddons);
+      } catch (error) {
+        console.log('Error fetching addons:', error);
+      }
+    };
+    fetchAddons();
+  }, [formData.type]);
 
   const hasEmptyFields = () => Object.keys(formData).some((category) => {
     if (typeof formData[category] === 'object') {
@@ -158,22 +178,56 @@ const MyForm: React.FC = () => {
     }));
   };
 
+  const handleAddonCheck = (event: React.ChangeEvent<HTMLInputElement>, index: number, addon_id: number) => {
+    const checked = event.target.checked;
+    if (checked) {
+      setFormData(prevData => ({
+        ...prevData,
+        order_addons: [
+          ...prevData.order_addons,
+          { addon: addon_id, addon_choice: null }
+        ]
+      }));
+    } else {
+      setFormData(prevData => ({
+        ...prevData,
+        order_addons: prevData.order_addons.filter(addonObj => addonObj.addon !== addon_id)
+      }));
+    }
+  };
+  
+
+  const handleAddonChoiceChange = (event: React.ChangeEvent<HTMLSelectElement>, addonIndex: number) => {
+    const { value } = event.target;
+    setFormData(prevData => {
+      const updatedOrderAddons = prevData.order_addons.map(addonObj =>
+        addonObj.addon === addonIndex ? { ...addonObj, addon_choice: value} : addonObj
+      );
+      return { ...prevData, order_addons: updatedOrderAddons };
+    });
+  };
 
   return (
     <form onSubmit={handleSubmit}>
+
       <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
         <h2 className="text-amber-600 font-bold mb-4">Information</h2>
         <select
           name="type"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           value={formData.type}
-          onChange={event => handleRootChange(event, 'type')}
+          onChange={event => {handleRootChange(event, 'type'); 
+          setFormData(prevData => ({
+            ...prevData,
+            order_addons: []
+          }));
+        }}
         >
           <option value="mm to sg">MM to SG</option>
           <option value="sg to mm">SG to MM</option>
         </select>
         <select
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="who_pay"
           value={formData.who_pay}
           onChange={event => handleRootChange(event, 'who_pay')}
@@ -181,12 +235,57 @@ const MyForm: React.FC = () => {
           <option value="mm pay">MM Pay</option>
           <option value="sg pay">SG Pay</option>
         </select>
+        <select
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          name="shipping_method"
+          value={formData.shipping_method}
+          onChange={event => handleRootChange(event, 'shipping_method')}
+        >
+          <option value="air cargo">Air Cargo</option>
+          <option value="sea cargo">Sea Cargo</option>
+          <option value="land express">Land Express</option>
+          <option value="land cargo">Land Cargo</option>
+        </select>
       </div>
+
+      {true && (
+        <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
+          <h2 className="text-amber-600 font-bold mb-4">Order Addons</h2>
+          {addons.map((addon, index) => (
+            <div key={index}>
+              <label className="flex items-center mb-4">
+                <input
+                  type="checkbox"
+                  name={`addon_${index}`}
+                  checked={formData.order_addons.some(addonObj => addonObj.addon === addon.id)}
+                  onChange={event => handleAddonCheck(event, index, addon.id)}
+                  className="me-2"
+                />
+                {addon.name}
+              </label>
+              {formData.order_addons.some(addonObj => addonObj.addon === addon.id) && (
+                <select
+                  className="mb-4 px-4 py-2 bg-white rounded-xl border-none"
+                  name={`addon_choice_${index}`}
+                  onChange={event => handleAddonChoiceChange(event, addon.id)}
+                >
+                  <option value="">Select Option</option>
+                  {addon.choices.map((choice: any) => (
+                    <option key={choice.id} value={choice.id}>{choice.name} - {choice.fee} SGD</option>
+                  ))}
+                </select>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
+
       <div className="bg-amber-100 my-8 rounded-xl shadow-md p-8">
         <h2 className="text-amber-600 font-bold mb-4">Recipient Information</h2>
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.name"
           value={formData.recipient_info.name}
           onChange={event => handleChange(event, 'recipient_info', 'name')}
@@ -194,7 +293,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.phone"
           value={formData.recipient_info.phone}
           onChange={event => handleChange(event, 'recipient_info', 'phone')}
@@ -202,7 +301,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.address"
           value={formData.recipient_info.address}
           onChange={event => handleChange(event, 'recipient_info', 'address')}
@@ -210,7 +309,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="recipient_info.postal_code"
           value={formData.recipient_info.postal_code}
           onChange={event => handleChange(event, 'recipient_info', 'postal_code')}
@@ -221,7 +320,7 @@ const MyForm: React.FC = () => {
         <h2 className="text-amber-600 font-bold mb-4">Sender Information</h2>
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.name"
           value={formData.sender_info.name}
           onChange={event => handleChange(event, 'sender_info', 'name')}
@@ -229,7 +328,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="email"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.email"
           value={formData.sender_info.email}
           onChange={event => handleChange(event, 'sender_info', 'email')}
@@ -237,7 +336,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.phone"
           value={formData.sender_info.phone}
           onChange={event => handleChange(event, 'sender_info', 'phone')}
@@ -245,7 +344,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.address"
           value={formData.sender_info.address}
           onChange={event => handleChange(event, 'sender_info', 'address')}
@@ -253,7 +352,7 @@ const MyForm: React.FC = () => {
         />
         <input
           type="text"
-          className="me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
+          className="me-8 sm:me-4 mb-4 px-4 py-2 bg-white rounded-xl border-none"
           name="sender_info.postal_code"
           value={formData.sender_info.postal_code}
           onChange={event => handleChange(event, 'sender_info', 'postal_code')}
@@ -294,7 +393,7 @@ const MyForm: React.FC = () => {
       {hasEmptyFields() && <p className="text-red-500 mb-4"> Please fill in all fields before submitting.</p>}
       <button className="focus:outline-0 px-8 py-2 mb-4 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-400" type="submit">
         {!submitting ? "Submit Form" : (<>
-          <Loader loading={submitting} message='' color='#ffffffr'></Loader>
+          <Loader loading={submitting} message='' color='#ffffff'></Loader>
         </>)}
       </button>
     </form>
